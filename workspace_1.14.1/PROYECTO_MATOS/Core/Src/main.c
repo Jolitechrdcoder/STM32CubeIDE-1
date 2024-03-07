@@ -58,17 +58,57 @@ static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
-
+//
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+//VARIABLES DEL SISTEMA
 uint32_t medida = 0;
-void p1_derecha(){
+float Volt =0.00;
+int count =0;
+//==========================
+//seteo inicial del sistema.
+
+void seteo_inicial(){
+
+	    X_derecha();
+		HAL_Delay(7000);
+		stop();
+		X_izquierda();
+		HAL_Delay(7000);
+		stop();
+
+		Y_derecha();
+		HAL_Delay(9000);
+		stop();
+		Y_izquierda();
+		HAL_Delay(13000);
+		stop();
+}
+
+
+// funcion para el piston de movimiento en el eje x
+void X_derecha(){
 	HAL_GPIO_WritePin(P1_R_GPIO_Port, P1_R_Pin, 1);
 }
-void p1_izquierda(){
+
+
+void X_izquierda(){
 	HAL_GPIO_WritePin(P1_L_GPIO_Port, P1_L_Pin, 1);
 }
+
+// funcion para el piston de movimiento en el eje Y
+void Y_derecha(){
+	HAL_GPIO_WritePin(P2_R_GPIO_Port, P2_R_Pin, 1);
+}
+
+
+void Y_izquierda(){
+	HAL_GPIO_WritePin(P2_L_GPIO_Port, P2_L_Pin, 1);
+}
+
+
+
+//FUNCION PARA DETENER LOS ACTUADORES.
 void stop(){
 	HAL_GPIO_WritePin(P1_R_GPIO_Port, P1_R_Pin, 0);
 	HAL_GPIO_WritePin(P1_L_GPIO_Port, P1_L_Pin, 0);
@@ -77,12 +117,9 @@ void stop(){
 }
 
 
-void p2_derecha(){
-	HAL_GPIO_WritePin(P2_R_GPIO_Port, P2_R_Pin, 1);
-}
-void p2_izquierda(){
-	HAL_GPIO_WritePin(P2_L_GPIO_Port, P2_L_Pin, 1);
-}
+
+
+// FUNCION PARA PRUEBAS GENERALES
 void mov(){
 
 	  if(!HAL_GPIO_ReadPin(btn_GPIO_Port, btn_Pin)){
@@ -115,8 +152,12 @@ void mov(){
 	  }
 }
 
-int count =0;
-float Volt =0.00;
+void medicion_voltaje(){
+	Volt=(medicion/4096.0)*voltaje;
+}
+
+
+
 /* USER CODE END 0 */
 
 /**
@@ -153,19 +194,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 	HAL_ADC_Start_DMA(&hadc1, &medida, 1);
-	p1_derecha();
-	HAL_Delay(7000);
-	stop();
-	p1_izquierda();
-	HAL_Delay(7000);
-	stop();
 
-	p2_derecha();
-	HAL_Delay(9000);
-	stop();
-	p2_izquierda();
-	HAL_Delay(13000);
-	stop();
 
 
   /* USER CODE END 2 */
@@ -174,7 +203,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  mov();
+	  medicion_voltaje();
+//	  mov();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
